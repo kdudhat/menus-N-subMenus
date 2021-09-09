@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import CustomMenu from "./CustomMenu";
+import "../css/menu.css";
 
 function CreateMenuForm() {
   const [menu, setMenu] = useState({});
   const [menuData, setMenuData] = useState([]);
+  const [error, setError] = useState();
+  console.log(`menuData`, menuData);
+  console.log(`menu`, menu);
   const onInputChange = (e) => {
+    setError();
     setMenu((prev) => ({ ...prev, menuName: e.target.value }));
   };
   const onSelectChange = (e) => {
@@ -22,6 +27,10 @@ function CreateMenuForm() {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    if (!menu.menuName) {
+      setError("Please Select Menu name");
+      return;
+    }
     let menuDataInstance = menuData;
     if (menu.parentIndex >= 0) {
       if (menuDataInstance[menu.levelIndex + 1] == undefined) {
@@ -39,7 +48,11 @@ function CreateMenuForm() {
       menuDataInstance[0].push({ menuName: menu.menuName });
     }
     setMenuData([...menuDataInstance]);
-    setMenu({});
+    setMenu({
+      menuName: "",
+      parentIndex: "",
+      levelIndex: "",
+    });
   };
 
   return (
@@ -53,7 +66,7 @@ function CreateMenuForm() {
             {menuData.map((data, levelIndex) =>
               data.map((parent, parentIndex) => (
                 <option
-                  key={parentIndex}
+                  key={`${levelIndex}${parentIndex}`}
                   value={parentIndex}
                   levelindex={levelIndex}
                 >
@@ -70,14 +83,17 @@ function CreateMenuForm() {
             onChange={onInputChange}
             value={menu.menuName}
           />
+          <p style={{ color: "red" }}>{error}</p>
         </div>
         <input type="submit" value="submit" />
       </form>
-      <CustomMenu
-        menuData={menuData}
-        levelIndex={0}
-        currentMenuData={menuData[0]}
-      />
+      <nav>
+        <CustomMenu
+          menuData={menuData}
+          levelIndex={0}
+          currentMenuData={menuData[0]}
+        />
+      </nav>
     </div>
   );
 }
