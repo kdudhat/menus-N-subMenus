@@ -1,16 +1,18 @@
 import React from "react";
 import "../css/menu.css";
+const shortid = require("shortid");
+
 function CustomMenu({ menuData, levelIndex, currentMenuData }) {
   return (
     <>
-      <ul className={levelIndex == 0 && "nav"}>
+      <ul className={levelIndex == 0 ? "nav" : undefined}>
         {currentMenuData?.map((item, index) => {
           const subMenu = menuData[levelIndex + 1]?.filter(
             (childItem) => childItem.parentIndex == index
           );
           return (
             <>
-              <li>
+              <li key={shortid.generate()}>
                 <a>{item.menuName}</a>
 
                 <CustomMenu

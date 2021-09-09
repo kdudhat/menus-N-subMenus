@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import CustomMenu from "./CustomMenu";
 import "../css/menu.css";
+const shortid = require("shortid");
 
 function CreateMenuForm() {
-  const [menu, setMenu] = useState({});
+  const [menu, setMenu] = useState({ menuName: "" });
   const [menuData, setMenuData] = useState([]);
+  const [defaultSelect, setDefaultSelect] = useState(undefined);
   const [error, setError] = useState();
   console.log(`menuData`, menuData);
   console.log(`menu`, menu);
@@ -13,6 +15,7 @@ function CreateMenuForm() {
     setMenu((prev) => ({ ...prev, menuName: e.target.value }));
   };
   const onSelectChange = (e) => {
+    setDefaultSelect(undefined);
     const parentIndex = e.target.value;
     const selectedIndex = e.nativeEvent.target.selectedIndex;
     const levelIndex =
@@ -50,17 +53,20 @@ function CreateMenuForm() {
     setMenuData([...menuDataInstance]);
     setMenu({
       menuName: "",
-      parentIndex: "",
-      levelIndex: "",
     });
+    setDefaultSelect(0);
   };
 
   return (
     <div>
       <form noValidate autoComplete="off" onSubmit={onSubmit}>
         <div>
-          <select onChange={onSelectChange} name="parentmenu">
-            <option selected={true} disabled={true}>
+          <select
+            onChange={onSelectChange}
+            name="parentmenu"
+            value={defaultSelect}
+          >
+            <option value={0} selected={true} disabled={true}>
               Choose Parent Menu
             </option>
             {menuData.map((data, levelIndex) =>
