@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import CustomMenu from "./CustomMenu";
 
-function Menu() {
-  const [category, setCategory] = useState({});
+function CreateMenuForm() {
+  const [menu, setMenu] = useState({});
   const [menuData, setMenuData] = useState([]);
   const onInputChange = (e) => {
-    setCategory((prev) => ({ ...prev, categoryName: e.target.value }));
+    setMenu((prev) => ({ ...prev, menuName: e.target.value }));
   };
   const onSelectChange = (e) => {
     const parentIndex = e.target.value;
@@ -12,7 +13,7 @@ function Menu() {
     const levelIndex =
       e.nativeEvent.target[selectedIndex].getAttribute("levelIndex");
 
-    setCategory((prev) => ({
+    setMenu((prev) => ({
       ...prev,
       parentIndex: parseInt(parentIndex),
       levelIndex: parseInt(levelIndex),
@@ -22,34 +23,32 @@ function Menu() {
   const onSubmit = (e) => {
     e.preventDefault();
     let menuDataInstance = menuData;
-    if (category.parentIndex >= 0) {
-      console.log(`parentIndex`);
-      if (menuDataInstance[category.levelIndex + 1] == undefined) {
-        menuDataInstance[category.levelIndex + 1] = [];
+    if (menu.parentIndex >= 0) {
+      if (menuDataInstance[menu.levelIndex + 1] == undefined) {
+        menuDataInstance[menu.levelIndex + 1] = [];
       }
-      menuDataInstance[category.levelIndex + 1].push({
-        parentIndex: category.parentIndex,
-        levelIndex: category.levelIndex,
-        categoryName: category.categoryName,
+      menuDataInstance[menu.levelIndex + 1].push({
+        parentIndex: menu.parentIndex,
+        levelIndex: menu.levelIndex,
+        menuName: menu.menuName,
       });
     } else {
       if (menuDataInstance[0] == undefined) {
         menuDataInstance[0] = [];
       }
-      menuDataInstance[0].push({ categoryName: category.categoryName });
+      menuDataInstance[0].push({ menuName: menu.menuName });
     }
     setMenuData([...menuDataInstance]);
-    setCategory({});
+    setMenu({});
   };
-  console.log(`menuData`, menuData);
-  console.log(`category`, category);
+
   return (
     <div>
       <form noValidate autoComplete="off" onSubmit={onSubmit}>
         <div>
-          <select onChange={onSelectChange} name="parentCategory">
+          <select onChange={onSelectChange} name="parentmenu">
             <option selected={true} disabled={true}>
-              Choose Tagging
+              Choose Parent Menu
             </option>
             {menuData.map((data, levelIndex) =>
               data.map((parent, parentIndex) => (
@@ -58,7 +57,7 @@ function Menu() {
                   value={parentIndex}
                   levelindex={levelIndex}
                 >
-                  {parent.categoryName}
+                  {parent.menuName}
                 </option>
               ))
             )}
@@ -69,13 +68,18 @@ function Menu() {
             placeholder="Enter Menu name"
             type="text"
             onChange={onInputChange}
-            value={category.categoryName}
+            value={menu.menuName}
           />
         </div>
         <input type="submit" value="submit" />
       </form>
+      <CustomMenu
+        menuData={menuData}
+        levelIndex={0}
+        currentMenuData={menuData[0]}
+      />
     </div>
   );
 }
 
-export default Menu;
+export default CreateMenuForm;
